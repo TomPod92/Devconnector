@@ -15,6 +15,7 @@ module.exports = function(req, res, next) {
     try {
         const decodedToken = jwt.verify(token, config.get('jwtSecret'));
 
+        // dzięki temu w każdym endpoint'cie który ma dodany ten middleware, będziemy mieli dostęp do "req.user"
         req.user = decodedToken.user;
         next();
     } catch (error) {
