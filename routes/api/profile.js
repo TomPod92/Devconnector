@@ -13,7 +13,7 @@ router.get('/me',authMiddleware, async (req, res) => {
         // pobierz profil użytkownika (gdzie user === req.user.id) i dodaj do niego "name" i "avatar"
         // pierwszy argument "populate" to model, z którego będziemy wyciągali dane
         // drugi argument to pola, które będziemy wyciągali
-        const profile = await Profile.findOne({ user: req.user.id }).populate('User', ['name', 'avatar']);
+        const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'avatar']);
 
         // jeżeli nie znalazł profilu dla użytkownika o danym ID, zwróc błąd
         if(!profile) return res.status(400).json({ msg: "No profile for that user" }) // 400 - bad request
@@ -74,6 +74,36 @@ router.post('/', [authMiddleware, [
         res.status(500).send("Server error");
     }
 
+});
+//---------------------------------------------------------------------------------------
+// GET api/profile
+// Pobierz wszystkie profile
+// public
+router.get('/', async (req, res) => {
+    try {
+        const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+        res.json(profiles);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error");
+    }
+});
+//---------------------------------------------------------------------------------------
+// GET api/profile/user/:user_id
+// Pobierz profil o danym user_id
+// public
+router.get('/user/:user_id', async (req, res) => {
+    try {
+        const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
+
+        if(!profile) return res.status(400).json({ msg: "Profile not found" }); // 400 - bad request
+
+        res.json(profile);
+    } catch (error) {
+        console.error(error.message);
+        if(error.kind == 'ObjectId') return res.status(400).json({ msg: "Profile not found" }); // 400 - bad request
+        res.status(500).send("Server error");
+    }
 });
 
 module.exports = router;
