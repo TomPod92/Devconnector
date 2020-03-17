@@ -16,12 +16,12 @@ router.post('/', [
     check('password', 'Enter a password with 6+ characters').isLength({min: 6})
 ], async (req, res) => {
 
-    const { name, email, password } = req.body;
-    const errors = validationResult(req);
-
     // Jeżeli wystąpiły jakieś błędy, zakończ działanie
+    const errors = validationResult(req);
     if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() }) // 400 - bad request
-
+    
+    const { name, email, password } = req.body;
+    
     try {
         // sprawdz czy użykownik z takim email'em już istnieje
         let user = await User.findOne({ email: email });
