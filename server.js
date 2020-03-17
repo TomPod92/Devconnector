@@ -6,6 +6,9 @@ const app = express();
 // Połączenie z baza danych
 connectDB();
 
+// Middleware
+app.use(express.json({extended: false}));
+
 app.get('/', (request, response) => response.send('API running'));
 
 // Rejestracja endpoint'ow
