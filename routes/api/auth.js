@@ -32,7 +32,9 @@ router.post('/', [
     const errors = validationResult(req);
 
     // Jeżeli wystąpiły jakieś błędy, zakończ działanie
-    if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() }) // 400 - bad request
+    if(!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() }) // 400 - bad request
+    }
 
     try {
         // sprawdz czy użykownik z takim email'em istnieje
