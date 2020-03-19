@@ -58,7 +58,8 @@ router.get('/', authMiddleware, async (req, res) => {
 router.get('/:post_id', authMiddleware, async (req, res) => {
     try {
         // Pobierz posta o danym ID
-        const post = await Post.find({ _id: req.params.post_id });
+        const post = await Post.findOne({ _id: req.params.post_id });
+        console.log(post)
         // const post = await Post.findById(req.params.post_id); // inny sposób
 
         if(!post) {
@@ -74,6 +75,40 @@ router.get('/:post_id', authMiddleware, async (req, res) => {
             return res.status(404).json({ msg: "Post not found"}); // 404 - not found
         }
 
+        res.status(500).send('Server error');
+    }
+});
+
+//---------------------------------------------------------------------------------------
+// DELETE api/post/:post_id
+// Usuń pojedyńczego posta
+// private
+router.delete('/:post_id', authMiddleware, async (req, res) => {
+    try {
+        // Pobierz posta o danym ID
+        const post = await Post.findOne({ _id: req.params.post_id });
+        // const post = await Post.findById(req.params.post_id); // inny sposób
+
+        // jeżeli użytkownik jako post_id wpisał cos niepoprawnego np. "01"
+        if(!post) {
+            return res.status(404).json({ msg: "Post not found"}); // 404 - not found
+        }
+
+        // Sprawdz czy użytkownik, który chce usunąć posta jest jego właścicielem
+        if(post.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: "User not authorized" }); // 401 - not authorized
+        }
+
+        // Usuń posta
+        await post.remove();
+
+        res.json({ msg: "Post removed" });
+    } catch (error) {
+        console.error(error.message);
+        // jeżeli użytkownik jako post_id wpisał cos niepoprawnego np. "01"
+        if(error.kind === "ObjectId") {
+            return res.status(404).json({ msg: "Post not found"}); // 404 - not found
+        }
         res.status(500).send('Server error');
     }
 });
