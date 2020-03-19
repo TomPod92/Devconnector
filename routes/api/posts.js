@@ -113,4 +113,37 @@ router.delete('/:post_id', authMiddleware, async (req, res) => {
     }
 });
 
+//---------------------------------------------------------------------------------------
+// PUT api/post/like/:post_id
+// Dodaj polubienie posta
+// private
+router.put('/like/:post_id', authMiddleware, async (req, res) => {
+    try {
+        const post = await Post.findOne({ _id: req.params.post_id });
+        // const post = await Post.findById(req.params.post_id); // inny sposób
+
+        // Usuń like'a jeżeli zalogowany użtykownik wcześniej polubił tego posta
+        if(post.likes.filter(current => current.user.toString() === req.user.id).length > 0) {
+            // return res.status(400).json({ msg: "Post already liked" }); // 400 - bad request
+
+            // Znajdz index like'a do usunięcia
+            const indexToRemove = post.likes.findIndex(current => current.user.toString() === req.user.id);
+            post.likes.splice(indexToRemove, 1);
+            await post.save();
+
+            return res.json(post.likes);
+        }
+
+        // Dodaj id zalogowanego użytkownika do tablicy like'ów
+        post.likes.unshift({ user: req.user.id });
+        await post.save();
+
+        res.json(post.likes);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
+
 module.exports = router;
