@@ -224,19 +224,24 @@ router.put('/comment/:post_id/:comment_id',[authMiddleware, [
         return res.status(400).json({ errors: errors.array() }) // 400 - bad request
     }
 
-    const post = await Post.findOne({ _id: req.params.post_id });
-    const commentIndex = post.comments.findIndex(current => current.id === req.params.comment_id);
-    
-    // Sprawdzić czy zalogowany użtykownik jest autorem komentarza
-    if(post.comments[commentIndex].user.toString() !== req.user.id) {
-        return res.status(401).json({ msg: "User not authorized" }); // 401 - not authorized
-    }
+    try { 
+        const post = await Post.findOne({ _id: req.params.post_id });
+        const commentIndex = post.comments.findIndex(current => current.id === req.params.comment_id);
+        
+        // Sprawdzić czy zalogowany użtykownik jest autorem komentarza
+        if(post.comments[commentIndex].user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: "User not authorized" }); // 401 - not authorized
+        }
 
-    // Zmień text danego komentarza
-    post.comments[commentIndex].text = req.body.text;
-    await post.save();
-    
-    res.json(post.comments[commentIndex]);
+        // Zmień text danego komentarza
+        post.comments[commentIndex].text = req.body.text;
+        await post.save();
+        
+        res.json(post.comments[commentIndex]);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
 });
 
 module.exports = router;
