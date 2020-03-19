@@ -124,8 +124,6 @@ router.put('/like/:post_id', authMiddleware, async (req, res) => {
 
         // Usuń like'a jeżeli zalogowany użtykownik wcześniej polubił tego posta
         if(post.likes.filter(current => current.user.toString() === req.user.id).length > 0) {
-            // return res.status(400).json({ msg: "Post already liked" }); // 400 - bad request
-
             // Znajdz index like'a do usunięcia
             const indexToRemove = post.likes.findIndex(current => current.user.toString() === req.user.id);
             post.likes.splice(indexToRemove, 1);
@@ -139,6 +137,74 @@ router.put('/like/:post_id', authMiddleware, async (req, res) => {
         await post.save();
 
         res.json(post.likes);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
+//---------------------------------------------------------------------------------------
+// POST api/post/comment/:post_id
+// Dodaj komentarz do posta
+// private
+router.post('/comment/:post_id',[authMiddleware, [
+    check("text", "Text is required").not().isEmpty()
+]], async (req, res) => {
+    // Jeżeli wystąpiły jakieś błędy, zakończ działanie
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() }) // 400 - bad request
+    }
+    
+    try {
+        const user = await User.findOne({ _id: req.user.id }).select('-password');
+        const post = await Post.findOne({ _id: req.params.post_id });
+
+        // Stwórz komentarz i dodaj go do posta
+        const newComment = {
+            user: req.user.id,
+            text: req.body.text,
+            name: user.name,
+            avatar: user.avatar,
+        };
+
+        post.comments.unshift(newComment);
+
+        await post.save();
+
+        res.json(post.comments);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
+
+//---------------------------------------------------------------------------------------
+// DELETE api/post/comment/:post_id/:comment_id
+// Usuń komentarz z posta
+// private
+router.delete('/comment/:post_id/:comment_id', authMiddleware , async (req, res) => {
+    try {
+        const post = await Post.findOne({ _id: req.params.post_id });
+        const comment = post.comments.find(current => current.id === req.params.comment_id);
+
+        // Sprawdzić czy znalazł komentarz
+        if(!comment) {
+            return res.status(404).json({ msg: "Comment not found" }); // 404 - not found
+        }
+
+        // Sprawdzić czy zalogowany użtykownik jest autorem komentarza
+        if(comment.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: "User not authorized" }); // 401 - not authorized
+        }
+
+        // Znajdz index komentarza do usunięcia
+        const indexToRemove = post.comments.findIndex(current => current.user.toString() === req.user.id);
+        post.comments.splice(indexToRemove, 1);
+        await post.save();
+
+        return res.json(post.comments);
 
     } catch (error) {
         console.error(error.message);
