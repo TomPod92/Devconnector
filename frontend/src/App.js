@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar.js';
 import Landing from './components/layout/Landing.js';
@@ -9,28 +9,41 @@ import Alert from './components/layout/Alert.js';
 // Redux imports
 import { Provider } from 'react-redux';
 import store from './redux/store.js';
-
+import { loadUser } from './redux/actions/auth.actions';
+import setAuthToken from './helpers/setAuthToken.js';
 
 import './App.css';
 
-const App = () => (
-  <Provider store={store}>
-        <BrowserRouter>
-        
-          <Navbar />
-          <Route exact path="/" component={Landing}/>
+// Jeżeli w localStorage znajduje sie już token dodaj go do header'a wszystkich zapytań
+if(localStorage.getItem('devconnector_token')) {
+  setAuthToken(localStorage.getItem('devconnector_token'));
+}
 
-          <section className="container">
-            <Alert />
-            <Switch>
-              <Route exact path="/register" component={Register} />
-              <Route exact path="/login" component={Login} />
-            </Switch>
-          </section>
+const App = () => {
+  // Gdy komponent się wyrenderuje po raz pierwszy, pobierz usera (jeżeli nie ma tokena to się nie uda)
+  useEffect(() => {
+    store.dispatch(loadUser());
+  }, []);
 
-        </BrowserRouter>
-      </Provider>
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+      
+        <Navbar />
+        <Route exact path="/" component={Landing}/>
+
+        <section className="container">
+          <Alert />
+          <Switch>
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+          </Switch>
+        </section>
+
+      </BrowserRouter>
+    </Provider>
   )
+}
 
 
 export default App;

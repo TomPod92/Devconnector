@@ -21,7 +21,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 //---------------------------------------------------------------------------------------
 // POST api/auth
-// Authenticate user and get token
+// Zaloguj użytkownika i pobierz token
 // public
 router.post('/', [
     check('email', 'Email is invalid').isEmail(),

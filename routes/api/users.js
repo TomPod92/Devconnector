@@ -7,15 +7,14 @@ const router = express.Router();
 const config = require('config');
 const User = require('../../models/user.model.js');
 
-// POST api/user
-// Zarejestruj użtkownika
+// POST api/users
+// Zarejestruj użytkownika
 // public
 router.post('/', [
     check('name', 'Name is required').not().isEmpty(),
     check('email', 'Email is invalid').isEmail(),
-    check('password', 'Enter a password with 6+ characters').isLength({min: 6})
+    check('password', 'Enter a password with 6 or more characters').isLength({min: 6})
 ], async (req, res) => {
-
     // Jeżeli wystąpiły jakieś błędy, zakończ działanie
     const errors = validationResult(req);
     if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() }) // 400 - bad request

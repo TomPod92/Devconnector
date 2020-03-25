@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { setAlert } from '../../redux/actions/alert.actions.js';
-import { Link } from 'react-router-dom';
+import { registerUser } from '../../redux/actions/auth.actions.js';
+import { Link, Redirect } from 'react-router-dom';
 
 const Register = (props) => {
 
@@ -20,9 +21,13 @@ const Register = (props) => {
         if( formData.password !== formData.confirmPassword) {
             props.setAlert('Passwords do not match', 'danger');
         } else {
-            console.log(formData)
-
+            props.registerUser(formData.name, formData.email, formData.password);
         }
+    }
+
+    // Jeżeli użytkownik jest już zalogowany, przekieruj go
+    if(props.isAuthenticated) {
+        return <Redirect to="/dashboard" />
     }
 
     return ( 
@@ -33,7 +38,7 @@ const Register = (props) => {
 
             <form className="form" onSubmit={handleFormSubmit}>
                 <div className="form-group">
-                    <input type="text" placeholder="Name" name="name" value={formData.name}  onChange={handleInputChange}required />
+                    <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleInputChange} />
                 </div>
 
                 <div className="form-group">
@@ -42,11 +47,11 @@ const Register = (props) => {
                 </div>
 
                 <div className="form-group">
-                    <input type="password" placeholder="Password" name="password" minLength="6" value={formData.password} onChange={handleInputChange} />
+                    <input type="password" placeholder="Password" name="password" value={formData.password} onChange={handleInputChange} />
                 </div>
 
                 <div className="form-group">
-                    <input type="password" placeholder="Confirm Password" name="confirmPassword" minLength="6"  value={formData.confirmPassword} onChange={handleInputChange} />
+                    <input type="password" placeholder="Confirm Password" name="confirmPassword"  value={formData.confirmPassword} onChange={handleInputChange} />
                 </div>
 
                 <input type="submit" className="btn btn-primary" value="Register" />
@@ -56,5 +61,9 @@ const Register = (props) => {
         </>
      );
 }
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.authReducer.isAuthenticated
+});
  
-export default connect(null, { setAlert })(Register);
+export default connect(mapStateToProps, { setAlert, registerUser })(Register);

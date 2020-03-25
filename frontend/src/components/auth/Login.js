@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
+import { loginUser } from '../../redux/actions/auth.actions.js';
 
-const Login = () => {
+const Login = (props) => {
 
     const [ formData, setFormData ] = useState({
         email: '',
@@ -10,10 +12,15 @@ const Login = () => {
 
     const handleInputChange = (event) => setFormData({ ...formData, [event.target.name]: event.target.value });
 
-    const handleFormSubmit = (event) => {
+    const handleFormSubmit = async (event) => {
         event.preventDefault();
 
-        console.log(formData)
+        props.loginUser(formData.email, formData.password);
+    }
+
+    // Jeżeli użytkownik jest już zalogowany, przekieruj go
+    if(props.isAuthenticated) {
+        return <Redirect to="/dashboard" />
     }
 
     return ( 
@@ -37,6 +44,10 @@ const Login = () => {
             <p className="my-1">Don't have an account? <Link to="/register">Sign Up</Link></p>
         </>
      );
-}
+};
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.authReducer.isAuthenticated
+});
  
-export default Login;
+export default connect(mapStateToProps, { loginUser })(Login);
