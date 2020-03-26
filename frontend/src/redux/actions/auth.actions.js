@@ -7,7 +7,8 @@ import {
     AUTH_ERROR, 
     LOGIN_SUCCESS, 
     LOGIN_FAIL,
-    LOGOUT 
+    LOGOUT,
+    CLEAR_PROFILE
 } from '../actions/types.js';
 import setAuthToken from '../../helpers/setAuthToken.js';
 //---------------------------------------------------------------------------------
@@ -46,8 +47,8 @@ export const registerUser = (name, email, password) => async dispatch => {
             token: res.data.token
         });
 
-        // pobierz użytkownika na podstawie tokena, który właśnie znalazł się w localStorage    
-        dispatch(loadUser);
+        // pobierz użytkownika na podstawie tokena, który właśnie znalazł się w localStorage  
+        dispatch(loadUser());
 
     } catch (error) {
         const errors = error.response.data.errors;
@@ -78,7 +79,7 @@ export const loginUser = (email, password) => async dispatch => {
         });
 
         // pobierz użytkownika na podstawie tokena, który właśnie znalazł się w localStorage
-        dispatch(loadUser);
+        dispatch(loadUser());
 
     } catch (error) {
         const errors = error.response.data.errors;
@@ -94,7 +95,6 @@ export const loginUser = (email, password) => async dispatch => {
 };
 //---------------------------------------------------------------------------------
 export const logout = () => dispatch => {
-    dispatch({
-        type: LOGOUT
-    })
+    dispatch({ type: CLEAR_PROFILE });
+    dispatch({ type: LOGOUT });
 };
