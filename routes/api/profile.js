@@ -34,7 +34,6 @@ router.post('/', [authMiddleware, [
     check('status', 'Status is required').not().isEmpty(),
     check('skills', 'Skills should not be empty').not().isEmpty()
 ]], async (req, res) => {
-
     // Jeżeli wystąpiły jakieś błędy, zakończ działanie
     const errors = validationResult(req);
     if(!errors.isEmpty()) {

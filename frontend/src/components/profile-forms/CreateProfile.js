@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { createProfile } from '../../redux/actions/profile.actions.js';
+import { Link, withRouter } from 'react-router-dom';
 
 const CreateProfile = (props) => {
 
@@ -24,6 +26,12 @@ const CreateProfile = (props) => {
 
     const handleInputChange = (event) => setFormData({...formData, [event.target.name]: event.target.value});
 
+    const handleFormSubmit = (event) => {
+      event.preventDefault();
+      
+      props.createProfile(formData, props.history);
+    };
+
     return ( 
         <>
             <h1 className="large text-primary">Create Your Profile</h1>
@@ -31,7 +39,7 @@ const CreateProfile = (props) => {
 
             <small>* = required field</small>
 
-            <form className="form">
+            <form className="form" onSubmit={handleFormSubmit}>
                 <div className="form-group">
                     <select name="status" value={status} onChange={handleInputChange}>
                         <option value="0">* Select Professional Status</option>
@@ -109,13 +117,11 @@ const CreateProfile = (props) => {
                     </div>
                 </>}
 
-                
-
                 <input type="submit" className="btn btn-primary my-1" />
                 <a className="btn btn-light my-1" href="dashboard.html">Go Back</a>
             </form>
         </>
     );
-}
+};
  
-export default CreateProfile;
+export default connect(null, { createProfile })(withRouter(CreateProfile));
