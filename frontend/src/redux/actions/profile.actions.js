@@ -3,7 +3,6 @@ import { setAlert } from './alert.actions.js';
 import {
     GET_PROFILE,
     PROFILE_ERROR,
-    LOGIN_FAIL
 } from '../actions/types.js';
 
 export const getLoggedUserProfile = () => async dispatch => {
