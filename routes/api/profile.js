@@ -62,7 +62,6 @@ router.post('/', [authMiddleware, [
     try {
         // Jeżeli profil dla użytkownika o danym ID istnieje zaktualizuj go
         let profile = await Profile.findOne({ user: req.user.id });
-        console.log('wewnatrz route, zwracam:', profile)
         if(profile) {
             profile = await Profile.findOneAndUpdate({ user: req.user.id }, { $set: profileFields }, { new: true });
             return res.json(profile);

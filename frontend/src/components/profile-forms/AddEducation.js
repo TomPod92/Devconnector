@@ -59,7 +59,7 @@ const AddEducation = (props) => {
                 </div>
 
                 <div className="form-group">
-                    <p><input type="checkbox" name="current" checked={current} value={current} onChange={handleCheckboxChange} />{' '}Current Job</p>
+                    <p><input type="checkbox" name="current" checked={current} value={current} onChange={handleCheckboxChange} />{' '}Current</p>
                 </div>
 
                 <div className="form-group">

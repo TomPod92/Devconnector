@@ -59,7 +59,6 @@ router.get('/:post_id', authMiddleware, async (req, res) => {
     try {
         // Pobierz posta o danym ID
         const post = await Post.findOne({ _id: req.params.post_id });
-        console.log(post)
         // const post = await Post.findById(req.params.post_id); // inny sposób
 
         if(!post) {

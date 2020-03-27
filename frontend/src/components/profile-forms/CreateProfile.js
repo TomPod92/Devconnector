@@ -28,8 +28,13 @@ const CreateProfile = (props) => {
 
     const handleFormSubmit = (event) => {
       event.preventDefault();
+
+      const body = {
+          ...formData,
+          skills: formData.skills.split(',').map(current => current.trim())
+      };
       
-      props.createProfile(formData, props.history);
+      props.createProfile(body, props.history);
     };
 
     return ( 
