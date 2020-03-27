@@ -31,7 +31,6 @@ export const createProfile = (formData, history, edit = false) => async dispatch
         };
 
         const res = await axios.post('/api/profile', formData, config);
-
         // zapisz profil do reduxa
         dispatch({
             type: GET_PROFILE,

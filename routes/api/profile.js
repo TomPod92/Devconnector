@@ -39,7 +39,6 @@ router.post('/', [authMiddleware, [
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() }) // 400 - bad request
     }
-
     // Stwórz obiekt profile
     const { company, website, location, bio, status, githubusername, skills, youtube, facebook, twitter, instagram, linkedin } = req.body;
 
@@ -52,7 +51,7 @@ router.post('/', [authMiddleware, [
     if(bio) profileFields.bio = bio;
     if(status) profileFields.status = status;
     if(githubusername) profileFields.githubusername = githubusername;
-    if(skills) profileFields.skills = skills.split(',').map(current => current.trim());
+    if(skills.length > 0) profileFields.skills = skills.join();
     profileFields.social = {};
     if(youtube) profileFields.social.youtube = youtube;
     if(twitter) profileFields.social.twitter = twitter;
@@ -63,6 +62,7 @@ router.post('/', [authMiddleware, [
     try {
         // Jeżeli profil dla użytkownika o danym ID istnieje zaktualizuj go
         let profile = await Profile.findOne({ user: req.user.id });
+        console.log('wewnatrz route, zwracam:', profile)
         if(profile) {
             profile = await Profile.findOneAndUpdate({ user: req.user.id }, { $set: profileFields }, { new: true });
             return res.json(profile);

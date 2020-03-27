@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getLoggedUserProfile } from '../../redux/actions/profile.actions.js';
 import { Link } from 'react-router-dom';
+import DashboardActions from './DashboardActions.js';
 import Spinner from '../layout/Spinner.js';
 
 const Dashboard = (props) => {
@@ -21,7 +22,7 @@ const Dashboard = (props) => {
             </p>
 
             {props.profile.profile !== null ? (
-                <>has</>
+                <><DashboardActions/></>
             ) : (
                 <>
                     <p>You have not yet setup a profile, please add some info</p>

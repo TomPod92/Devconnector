@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { createProfile } from '../../redux/actions/profile.actions.js';
+import { createProfile, getLoggedUserProfile } from '../../redux/actions/profile.actions.js';
 import { Link, withRouter } from 'react-router-dom';
 
-const CreateProfile = (props) => {
+const EditProfile = (props) => {
 
     const [ formData, setFormData ] = useState({
         company: '',
@@ -19,19 +19,34 @@ const CreateProfile = (props) => {
         youtube: '',
         instagram: ''
     });
+//--------------------------------------------------------------------------------
+    useEffect(() => {
+        const { profile, loading } = props.profile;
 
+        if (!profile) getLoggedUserProfile();
+        if (!loading) {
+          const profileData = { ...formData };
+          for (const key in profile) {
+            if (key in profileData) profileData[key] = profile[key];
+          }
+          for (const key in profile.social) {
+            if (key in profileData) profileData[key] = profile.social[key];
+          }
+          setFormData(profileData);
+        }
+      }, [props.loading, props.getLoggedUserProfile, props.profile]);
+//--------------------------------------------------------------------------------
     const [ displaySocials, setDisplaySocials ] = useState(false);
-
+//--------------------------------------------------------------------------------
     const { company, website, location, status, skills, githubusername, bio, twitter, facebook, linkedin, youtube, instagram } = formData;
-
+//--------------------------------------------------------------------------------
     const handleInputChange = (event) => setFormData({...formData, [event.target.name]: event.target.value});
-
+//--------------------------------------------------------------------------------
     const handleFormSubmit = (event) => {
       event.preventDefault();
-      
-      props.createProfile(formData, props.history);
+      props.createProfile(formData, props.history, true);
     };
-
+//--------------------------------------------------------------------------------
     return ( 
         <>
             <h1 className="large text-primary">Create Your Profile</h1>
@@ -123,5 +138,9 @@ const CreateProfile = (props) => {
         </>
     );
 };
+
+const mapStateToProps = state => ({
+    profile: state.profileReducer
+});
  
-export default connect(null, { createProfile })(withRouter(CreateProfile));
+export default connect(mapStateToProps, { createProfile, getLoggedUserProfile })(withRouter(EditProfile));
