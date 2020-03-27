@@ -3,6 +3,7 @@ import { setAlert } from './alert.actions.js';
 import {
     GET_PROFILE,
     PROFILE_ERROR,
+    UPDATE_PROFILE
 } from '../actions/types.js';
 
 export const getLoggedUserProfile = () => async dispatch => {
@@ -57,3 +58,69 @@ export const createProfile = (formData, history, edit = false) => async dispatch
         });
     }
 };
+
+export const addExperience = (formData, history) => async dispatch => {
+    try {
+        const config = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        };
+
+        const res = await axios.put('/api/profile/experience', formData, config);
+
+        dispatch({
+            type: UPDATE_PROFILE,
+            profile: res.data
+        });
+
+        dispatch(setAlert('Experience added', 'success'));
+
+        history.push('/dashboard');
+
+    } catch (error) {
+        const errors = error.response.data.errors;
+
+        if(errors) {
+            errors.forEach(current => dispatch(setAlert(current.msg, 'danger')));
+        }
+
+        dispatch({
+            type: PROFILE_ERROR,
+            error: { msg: error.response.statusText, status: error.response.status }
+        });
+    }
+};
+
+export const addEducation = (formData, history) => async dispatch => {
+    try {
+        const config = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        };
+
+        const res = await axios.put('/api/profile/education', formData, config);
+
+        dispatch({
+            type: UPDATE_PROFILE,
+            profile: res.data
+        });
+
+        dispatch(setAlert('Education added', 'success'));
+
+        history.push('/dashboard');
+
+    } catch (error) {
+        const errors = error.response.data.errors;
+
+        if(errors) {
+            errors.forEach(current => dispatch(setAlert(current.msg, 'danger')));
+        }
+
+        dispatch({
+            type: PROFILE_ERROR,
+            error: { msg: error.response.statusText, status: error.response.status }
+        });
+    }
+}; 

@@ -1,7 +1,8 @@
 import {
     GET_PROFILE,
     PROFILE_ERROR,
-    CLEAR_PROFILE
+    CLEAR_PROFILE,
+    UPDATE_PROFILE
 } from '../actions/types.js';
 
 const initialState = {
@@ -15,6 +16,8 @@ const initialState = {
 const profileReducer = (state = initialState, action) => {
     switch(action.type) {
         case GET_PROFILE:
+            return {...state, profile: action.profile, loading: false};
+        case UPDATE_PROFILE:
             return {...state, profile: action.profile, loading: false};
         case PROFILE_ERROR:
             return {...state, error: action.error, loading: false};
