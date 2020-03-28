@@ -2,12 +2,15 @@ import axios from 'axios';
 import { setAlert } from './alert.actions.js';
 import {
     GET_PROFILE,
+    GET_ALL_PROFILES,
+    GET_REPOS,
     PROFILE_ERROR,
     UPDATE_PROFILE,
     CLEAR_PROFILE,
     DELETE_ACCOUNT
 } from '../actions/types.js';
 
+// pobierz profil zalogowanego użytkownika
 export const getLoggedUserProfile = () => async dispatch => {
     try {
         const res = await axios.get('/api/profile/me');
@@ -15,6 +18,62 @@ export const getLoggedUserProfile = () => async dispatch => {
         dispatch({
             type: GET_PROFILE,
             profile: res.data
+        });
+    } catch (error) {
+        dispatch({
+            type: PROFILE_ERROR,
+            error: { msg: error.response.statusText, status: error.response.status }
+        });
+    }
+};
+
+// Pobierz wszystkie profile
+export const getAllProfiles = () => async dispatch => {
+
+    dispatch({
+        type: CLEAR_PROFILE
+    });
+
+    try {
+        const res = await axios.get('/api/profile');
+
+        dispatch({
+            type: GET_ALL_PROFILES,
+            profiles: res.data
+        });
+    } catch (error) {
+        dispatch({
+            type: PROFILE_ERROR,
+            error: { msg: error.response.statusText, status: error.response.status }
+        });
+    }
+};
+
+// Pobierz profil o danym ID
+export const getProfileById = (user_id) => async dispatch => {
+    try {
+        const res = await axios.get(`/api/profile/user/${user_id}`);
+
+        dispatch({
+            type: GET_PROFILE,
+            profile: res.data
+        });
+    } catch (error) {
+        dispatch({
+            type: PROFILE_ERROR,
+            error: { msg: error.response.statusText, status: error.response.status }
+        });
+    }
+};
+
+// Pobierz repozytoria
+export const getGithubRepos = (username) => async dispatch => {
+    try {
+        const res = await axios.get(`/api/profile/github/${username}`);
+
+        dispatch({
+            type: GET_REPOS,
+            repos: res.data
         });
     } catch (error) {
         dispatch({
