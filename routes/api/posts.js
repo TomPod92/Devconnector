@@ -143,6 +143,33 @@ router.put('/like/:post_id', authMiddleware, async (req, res) => {
     }
 });
 //---------------------------------------------------------------------------------------
+// PUT api/post/unlike/:post_id
+// Usuń polubienie posta
+// private
+router.put('/unlike/:post_id', authMiddleware, async (req, res) => {
+    try {
+        const post = await Post.findOne({ _id: req.params.post_id });
+        // const post = await Post.findById(req.params.post_id); // inny sposób
+
+        // Sprawdz czy post został juz polubiony
+        if (post.likes.filter(current => current.user.toString() === req.user.id).length === 0) {
+            return res.status(400).json({ msg: 'Post has not yet been liked' });
+        }
+
+        // Get remove index
+        const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
+
+        post.likes.splice(removeIndex, 1);
+
+        await post.save();
+
+        res.json(post.likes);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+//---------------------------------------------------------------------------------------
 // POST api/post/comment/:post_id
 // Dodaj komentarz do posta
 // private
