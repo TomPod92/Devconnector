@@ -23,27 +23,32 @@ const PostItem = (props) => {
             <p className="my-1">{props.post.text}</p>
             <p className="post-date">Posted on <Moment format="YYYY/MM/DD">{props.post.date}</Moment></p>
 
-            <button type="button" className="btn btn-light" onClick={handleAddLike}>
-                <i className="fas fa-thumbs-up">
-                    { props.post.likes.length > 0 && <span>{'  '}{props.post.likes.length}</span> }
-                </i>
-            </button>
+            {props.showActions && 
+                <>
+                    <button type="button" className="btn btn-light" onClick={handleAddLike}>
+                        <i className="fas fa-thumbs-up">
+                            { props.post.likes.length > 0 && <span>{'  '}{props.post.likes.length}</span> }
+                        </i>
+                    </button>
 
-            <button type="button" className="btn btn-light" onClick={handleRemoveLike}>
-                <i className="fas fa-thumbs-down"></i>
-            </button>
+                    <button type="button" className="btn btn-light" onClick={handleRemoveLike}>
+                        <i className="fas fa-thumbs-down"></i>
+                    </button>
 
-            <Link to={`/post/${props.post._id}`} className="btn btn-primary">
-                Discussion{'  '} 
-                {props.post.comments.length > 0 && 
-                 <span className="comment-count">{props.post.comments.length}</span>
-                }
-            </Link>
+                    <Link to={`/posts/${props.post._id}`} className="btn btn-primary">
+                        Discussion{'  '} 
+                        {props.post.comments.length > 0 && 
+                        <span className="comment-count">{props.post.comments.length}</span>
+                        }
+                    </Link>
 
-            { !props.auth.loading && 
-               props.post.user === props.auth.user._id && 
-               <button type="button" className="btn btn-danger" onClick={handleDeletePost}><i className="fas fa-times"></i></button>
+                    { !props.auth.loading && 
+                    props.post.user === props.auth.user._id && 
+                    <button type="button" className="btn btn-danger" onClick={handleDeletePost}><i className="fas fa-times"></i></button>
+                    }
+                </>
             }
+            
           </div>
         </div>
     );

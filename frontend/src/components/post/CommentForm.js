@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { addPost } from '../../redux/actions/post.actions.js';
+import { addComment } from '../../redux/actions/post.actions.js';
 
-const PostForm = (props) => {
+const CommentForm = (props) => {
     const [text, setText] = useState('');
 
     const handleTextChange = (event) => setText(event.target.value);
 
     const handleSumbit = (event) => {
         event.preventDefault();
-        props.addPost( {text} );
+        props.addComment(props.post_id, {text});
         setText('');
     }
 
     return (
         <div className="post-form">
             <div className="bg-primary p">
-                <h3>Say Something...</h3>
+                <h3>Leave comment</h3>
             </div>
 
             <form className="form my-1" onSubmit={handleSumbit}>
@@ -27,4 +27,4 @@ const PostForm = (props) => {
     );
 }
  
-export default connect(null, { addPost })(PostForm);
+export default connect(null, { addComment })(CommentForm);

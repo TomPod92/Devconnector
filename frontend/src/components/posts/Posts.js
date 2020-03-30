@@ -24,7 +24,7 @@ const Posts = (props) => {
             <PostForm />
             
             <div className="posts">
-                {props.post.posts.map(current => <PostItem key={current._id} post={current} />)}
+                {props.post.posts.map(current => <PostItem key={current._id} post={current} showActions={true}/>)}
             </div>
         </>
     )
