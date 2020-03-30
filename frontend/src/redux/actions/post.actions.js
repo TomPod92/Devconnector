@@ -2,6 +2,7 @@ import axios from 'axios';
 import { setAlert } from './alert.actions.js';
 import {
     GET_POSTS,
+    ADD_POST,
     DELETE_POST,
     POST_ERROR,
     UPDATE_LIKES
@@ -16,6 +17,31 @@ export const getPosts = () => async dispatch => {
             type: GET_POSTS,
             posts: res.data
         });
+    } catch (error) {
+        dispatch({
+            type: POST_ERROR,
+            error: { msg: error.response.statusText, status: error.response.status }
+        });
+    }
+};
+
+// Dodaj post
+export const addPost = (formData) => async dispatch => {
+    try {
+        const config = {
+            headers: { "Content-Type": 'application/json' }
+        }
+    
+        // const body = JSON.stringify({name, email, password});
+
+        const res = await axios.post(`/api/posts`, formData, config);
+
+        dispatch({
+            type: ADD_POST,
+            post: res.data
+        });
+
+        dispatch(setAlert('Post added', 'success'));
     } catch (error) {
         dispatch({
             type: POST_ERROR,

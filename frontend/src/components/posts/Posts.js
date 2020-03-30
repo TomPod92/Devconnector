@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getPosts } from '../../redux/actions/post.actions.js';
+import PostForm from './PostForm.js';
 import Spinner from '../layout/Spinner.js';
 import PostItem from './PostItem.js';
 
@@ -19,6 +20,9 @@ const Posts = (props) => {
             <p className="lead">
                 <i className="fas fa-user"></i>Welcome to the community
             </p>
+
+            <PostForm />
+            
             <div className="posts">
                 {props.post.posts.map(current => <PostItem key={current._id} post={current} />)}
             </div>

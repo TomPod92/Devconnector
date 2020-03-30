@@ -1,5 +1,6 @@
 import {
     GET_POSTS,
+    ADD_POST,
     DELETE_POST,
     POST_ERROR,
     UPDATE_LIKES,
@@ -16,6 +17,8 @@ const postReducer = (state = initialState, action) => {
     switch(action.type) {
         case GET_POSTS:
             return {...state, posts: action.posts, loading: false};
+        case ADD_POST:
+            return {...state, posts: [action.post, ...state.posts], loading: false};
         case DELETE_POST:
             return {
                 ...state, 
